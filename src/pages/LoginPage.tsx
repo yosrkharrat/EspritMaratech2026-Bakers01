@@ -1,8 +1,14 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { Eye, EyeOff, Loader2 } from 'lucide-react';
-import rctLogo from '@/assets/rct-logo.svg';
+import { Eye, EyeOff, Loader2, Shield, Dumbbell, Users } from 'lucide-react';
+import rctLogo from '@/assets/rct-logo.png';
+
+const demoAccounts = [
+  { email: 'admin@rct.tn', cin: '123', role: 'Comité Directeur', icon: Shield },
+  { email: 'coach@rct.tn', cin: '456', role: 'Admin Coach', icon: Dumbbell },
+  { email: 'mohamed@rct.tn', cin: '789', role: 'Adhérant', icon: Users },
+];
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -11,18 +17,31 @@ const LoginPage = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const [showDemo, setShowDemo] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     if (!email.trim()) { setError('Entrez votre email'); return; }
-    if (!password) { setError('Entrez votre mot de passe'); return; }
+    if (!password) { setError('Entrez les 3 chiffres de votre CIN'); return; }
     setIsSubmitting(true);
     const result = await login(email, password);
     setIsSubmitting(false);
     if (result.success) { navigate('/'); return; }
     setError(result.error || 'Erreur');
+  };
+
+  const handleDemoLogin = async (demoEmail: string, demoCin: string) => {
+    setError('');
+    setIsSubmitting(true);
+    const result = await login(demoEmail, demoCin);
+    setIsSubmitting(false);
+    if (result.success) {
+      navigate('/');
+    } else {
+      setError(result.error || 'Erreur de connexion au compte démo');
+    }
   };
 
   return (
@@ -60,14 +79,14 @@ const LoginPage = () => {
             </div>
 
             <div>
-              <label htmlFor="login-password" className="text-xs font-medium mb-1 block">Mot de passe</label>
+              <label htmlFor="login-password" className="text-xs font-medium mb-1 block">Mot de passe (3 derniers chiffres CIN)</label>
               <div className="relative">
                 <input
                   id="login-password"
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={e => setPassword(e.target.value)}
-                  placeholder="••••••••"
+                  placeholder="123"
                   className="w-full h-11 px-4 pr-12 rounded-xl bg-muted border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                   disabled={isSubmitting}
                 />
@@ -93,6 +112,38 @@ const LoginPage = () => {
               Continuer en visiteur
             </button>
           </form>
+        </div>
+
+        {/* Demo Accounts */}
+        <div className="mt-4">
+          <button 
+            onClick={() => setShowDemo(!showDemo)} 
+            className="text-xs text-primary font-semibold mb-2 mx-auto block"
+          >
+            {showDemo ? 'Masquer les comptes de démonstration' : '👉 Comptes de démonstration'}
+          </button>
+          
+          {showDemo && (
+            <div className="space-y-2 animate-slide-up">
+              {demoAccounts.map(account => (
+                <button
+                  key={account.email}
+                  onClick={() => handleDemoLogin(account.email, account.cin)}
+                  disabled={isSubmitting}
+                  className="w-full bg-card rounded-xl p-3 rct-shadow-card flex items-center gap-3 text-left hover:bg-muted/50 transition-colors disabled:opacity-70"
+                >
+                  <div className="w-10 h-10 rounded-full rct-gradient-hero flex items-center justify-center flex-shrink-0">
+                    <account.icon className="w-5 h-5 text-white" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold truncate">{account.email}</p>
+                    <p className="text-xs text-muted-foreground">{account.role} · CIN: xxx{account.cin}</p>
+                  </div>
+                  <span className="text-xs text-primary font-semibold flex-shrink-0">Essayer →</span>
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         <p className="text-center text-[10px] text-muted-foreground py-3">

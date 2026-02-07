@@ -193,7 +193,8 @@ const CalendarPage = () => {
       )}
 
       {/* Group filter */}
-      <div className="flex gap-2 px-4 mb-4 overflow-x-auto hide-scrollbar">
+      <div className="px-4 mb-4 overflow-hidden">
+        <div className="flex gap-2 overflow-x-auto hide-scrollbar touch-pan-x">
         {groups.map(g => (
           <button 
             key={g} 
@@ -205,6 +206,7 @@ const CalendarPage = () => {
             {g}
           </button>
         ))}
+        </div>
       </div>
 
       {/* Events list */}

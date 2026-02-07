@@ -8,17 +8,26 @@ const iconMap = { event: Calendar, social: Heart, system: Info, reminder: Bell }
 const colorMap = { event: 'text-primary', social: 'text-destructive', system: 'text-accent', reminder: 'text-secondary' };
 
 const NotificationsPage = () => {
-  const { user } = useAuth();
+  const { user, isLoggedIn } = useAuth();
   const navigate = useNavigate();
   const [notifications, setNotifications] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    console.log('NotificationsPage - user:', user, 'isLoggedIn:', isLoggedIn);
+    
     const fetchNotifications = async () => {
-      if (!user) return;
+      if (!user) {
+        console.log('NotificationsPage - No user, setting isLoading to false');
+        setIsLoading(false);
+        return;
+      }
+      
+      console.log('NotificationsPage - Fetching notifications for user:', user.name);
       setIsLoading(true);
       try {
         const response = await notificationsApi.getAll();
+        console.log('NotificationsPage - API response:', response);
         if (response.success && response.data) {
           setNotifications(response.data as any[]);
         }
@@ -30,7 +39,7 @@ const NotificationsPage = () => {
     };
 
     fetchNotifications();
-  }, [user]);
+  }, [user, isLoggedIn]);
 
   const handleMarkAll = async () => {
     if (!user) return;
@@ -74,13 +83,26 @@ const NotificationsPage = () => {
           </button>
           <h1 className="font-display font-extrabold text-xl">Notifications</h1>
         </div>
-        <button onClick={handleMarkAll} className="flex items-center gap-1 text-xs text-primary font-semibold">
-          <CheckCheck className="w-4 h-4" /> Tout lire
-        </button>
+        {user && (
+          <button onClick={handleMarkAll} className="flex items-center gap-1 text-xs text-primary font-semibold">
+            <CheckCheck className="w-4 h-4" /> Tout lire
+          </button>
+        )}
       </div>
 
       <div className="px-4 space-y-2">
-        {isLoading ? (
+        {!isLoggedIn ? (
+          <div className="bg-card rounded-2xl rct-shadow-card p-8 text-center">
+            <Bell className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
+            <p className="text-muted-foreground text-sm">Connectez-vous pour voir vos notifications</p>
+            <button 
+              onClick={() => navigate('/login')}
+              className="mt-4 px-6 py-2 bg-primary text-primary-foreground rounded-xl font-semibold"
+            >
+              Se connecter
+            </button>
+          </div>
+        ) : isLoading ? (
           <div className="bg-card rounded-2xl rct-shadow-card p-8 text-center">
             <p className="text-muted-foreground text-sm">Chargement...</p>
           </div>
@@ -91,12 +113,13 @@ const NotificationsPage = () => {
           </div>
         ) : (
           notifications.map(n => {
-          const Icon = iconMap[n.type];
+          const Icon = iconMap[n.type as keyof typeof iconMap] || Bell;
+          const colorClass = colorMap[n.type as keyof typeof colorMap] || 'text-muted-foreground';
           return (
             <button key={n.id} onClick={() => handleTap(n.id, n.link)}
               className={`w-full text-left bg-card rounded-2xl rct-shadow-card p-4 flex items-start gap-3 transition-all ${!n.read ? 'border-l-4 border-primary' : 'opacity-70'}`}>
               <div className={`w-10 h-10 rounded-full bg-muted flex items-center justify-center flex-shrink-0`}>
-                <Icon className={`w-5 h-5 ${colorMap[n.type]}`} />
+                <Icon className={`w-5 h-5 ${colorClass}`} />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between">

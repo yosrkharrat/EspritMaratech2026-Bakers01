@@ -43,7 +43,7 @@ const SettingsPage = () => {
       title: 'Compte',
       items: [
         { icon: User, label: 'Modifier le profil', desc: 'Nom, photo, groupe', action: () => navigate('/profile') },
-        { icon: Bell, label: 'Notifications', desc: 'Gérer les préférences', action: () => navigate('/notifications') },
+        { icon: Bell, label: 'Notifications', desc: 'Gérer les alertes d\'événements', action: () => navigate('/notifications/settings') },
         ...(isAdmin ? [{ icon: Shield, label: 'Administration', desc: 'Gestion utilisateurs & rôles', action: () => navigate('/admin') }] : []),
       ],
     },

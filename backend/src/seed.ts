@@ -46,20 +46,23 @@ async function seed() {
     story3: uuidv4(),
   };
 
-  // Hash password
-  const hashedPassword = await bcrypt.hash('password123', 10);
+  // Hash passwords (3 derniers chiffres CIN)
+  const hashedPassword123 = await bcrypt.hash('123', 10); // Admin
+  const hashedPassword456 = await bcrypt.hash('456', 10); // Coach  
+  const hashedPassword789 = await bcrypt.hash('789', 10); // Mohamed
+  const hashedPasswordDefault = await bcrypt.hash('000', 10); // Autres
   const now = new Date().toISOString();
 
   // Seed Users
   console.log('Creating users...');
   const users: DbUser[] = [
-    { id: userIds.admin, email: 'admin@rct.tn', password: hashedPassword, name: 'Ahmed Ben Salem', avatar: 'https://i.pravatar.cc/150?u=admin', role: 'admin', group_name: 'Élite', distance: 1250, runs: 156, joined_events: 89, strava_connected: true, strava_id: 'strava_admin', created_at: now, updated_at: now },
-    { id: userIds.coach, email: 'coach@rct.tn', password: hashedPassword, name: 'Fatma Trabelsi', avatar: 'https://i.pravatar.cc/150?u=coach', role: 'coach', group_name: 'Élite', distance: 2100, runs: 245, joined_events: 120, strava_connected: true, strava_id: 'strava_coach', created_at: now, updated_at: now },
-    { id: userIds.member1, email: 'mohamed@rct.tn', password: hashedPassword, name: 'Mohamed Khelifi', avatar: 'https://i.pravatar.cc/150?u=mohamed', role: 'member', group_name: 'Intermédiaire', distance: 456, runs: 67, joined_events: 34, strava_connected: true, strava_id: 'strava_mohamed', created_at: now, updated_at: now },
-    { id: userIds.member2, email: 'leila@rct.tn', password: hashedPassword, name: 'Leila Mansour', avatar: 'https://i.pravatar.cc/150?u=leila', role: 'member', group_name: 'Intermédiaire', distance: 520, runs: 78, joined_events: 45, strava_connected: false, strava_id: null, created_at: now, updated_at: now },
-    { id: userIds.member3, email: 'youssef@rct.tn', password: hashedPassword, name: 'Youssef Chaabane', avatar: 'https://i.pravatar.cc/150?u=youssef', role: 'member', group_name: 'Débutant', distance: 123, runs: 23, joined_events: 12, strava_connected: true, strava_id: 'strava_youssef', created_at: now, updated_at: now },
-    { id: userIds.member4, email: 'amira@rct.tn', password: hashedPassword, name: 'Amira Bouazizi', avatar: 'https://i.pravatar.cc/150?u=amira', role: 'member', group_name: 'Débutant', distance: 89, runs: 15, joined_events: 8, strava_connected: false, strava_id: null, created_at: now, updated_at: now },
-    { id: userIds.member5, email: 'karim@rct.tn', password: hashedPassword, name: 'Karim Mejri', avatar: 'https://i.pravatar.cc/150?u=karim', role: 'member', group_name: 'Élite', distance: 890, runs: 112, joined_events: 67, strava_connected: true, strava_id: 'strava_karim', created_at: now, updated_at: now },
+    { id: userIds.admin, email: 'admin@rct.tn', password: hashedPassword123, name: 'Ahmed Ben Salem', avatar: 'https://i.pravatar.cc/150?u=admin', role: 'admin', group_name: 'Élite', distance: 1250, runs: 156, joined_events: 89, strava_connected: true, strava_id: 'strava_admin', created_at: now, updated_at: now },
+    { id: userIds.coach, email: 'coach@rct.tn', password: hashedPassword456, name: 'Fatma Trabelsi', avatar: 'https://i.pravatar.cc/150?u=coach', role: 'coach', group_name: 'Élite', distance: 2100, runs: 245, joined_events: 120, strava_connected: true, strava_id: 'strava_coach', created_at: now, updated_at: now },
+    { id: userIds.member1, email: 'mohamed@rct.tn', password: hashedPassword789, name: 'Mohamed Khelifi', avatar: 'https://i.pravatar.cc/150?u=mohamed', role: 'member', group_name: 'Intermédiaire', distance: 456, runs: 67, joined_events: 34, strava_connected: true, strava_id: 'strava_mohamed', created_at: now, updated_at: now },
+    { id: userIds.member2, email: 'leila@rct.tn', password: hashedPasswordDefault, name: 'Leila Mansour', avatar: 'https://i.pravatar.cc/150?u=leila', role: 'member', group_name: 'Intermédiaire', distance: 520, runs: 78, joined_events: 45, strava_connected: false, strava_id: null, created_at: now, updated_at: now },
+    { id: userIds.member3, email: 'youssef@rct.tn', password: hashedPasswordDefault, name: 'Youssef Chaabane', avatar: 'https://i.pravatar.cc/150?u=youssef', role: 'group_admin', group_name: 'Débutant', distance: 123, runs: 23, joined_events: 12, strava_connected: true, strava_id: 'strava_youssef', created_at: now, updated_at: now },
+    { id: userIds.member4, email: 'amira@rct.tn', password: hashedPasswordDefault, name: 'Amira Bouazizi', avatar: 'https://i.pravatar.cc/150?u=amira', role: 'member', group_name: 'Débutant', distance: 89, runs: 15, joined_events: 8, strava_connected: false, strava_id: null, created_at: now, updated_at: now },
+    { id: userIds.member5, email: 'karim@rct.tn', password: hashedPasswordDefault, name: 'Karim Mejri', avatar: 'https://i.pravatar.cc/150?u=karim', role: 'member', group_name: 'Élite', distance: 890, runs: 112, joined_events: 67, strava_connected: true, strava_id: 'strava_karim', created_at: now, updated_at: now },
   ];
   users.forEach(user => dbHelper.createUser(user));
 
@@ -400,10 +403,11 @@ async function seed() {
   chatMessages.forEach(m => dbHelper.createChatMessage(m));
 
   console.log('\n✅ SQLite database seeded successfully!');
-  console.log('\n📧 Test accounts:');
-  console.log('  Admin:  admin@rct.tn / password123');
-  console.log('  Coach:  coach@rct.tn / password123');
-  console.log('  Member: mohamed@rct.tn / password123');
+  console.log('\n📧 Test accounts (Nom / 3 derniers chiffres CIN):');
+  console.log('  Comité Directeur: admin@rct.tn / 123');
+  console.log('  Admin Coach:      coach@rct.tn / 456');
+  console.log('  Adhérant:         mohamed@rct.tn / 789');
+  console.log('  Responsable Grp:  youssef@rct.tn / 000');
   console.log('');
 }
 

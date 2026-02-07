@@ -8,9 +8,10 @@ interface ImageCarouselProps {
 const ImageCarousel = ({ images }: ImageCarouselProps) => {
   const [current, setCurrent] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
-  const touchStart = useRef(0);
-  const touchDelta = useRef(0);
+  const touchStart = useRef({ x: 0, y: 0 });
+  const touchDelta = useRef({ x: 0, y: 0 });
   const isDragging = useRef(false);
+  const isHorizontalSwipe = useRef(false);
 
   const goTo = useCallback((index: number) => {
     const clamped = Math.max(0, Math.min(images.length - 1, index));
@@ -18,24 +19,45 @@ const ImageCarousel = ({ images }: ImageCarouselProps) => {
   }, [images.length]);
 
   const handleTouchStart = (e: React.TouchEvent) => {
-    touchStart.current = e.touches[0].clientX;
+    touchStart.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    touchDelta.current = { x: 0, y: 0 };
     isDragging.current = true;
+    isHorizontalSwipe.current = false;
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
     if (!isDragging.current) return;
-    touchDelta.current = e.touches[0].clientX - touchStart.current;
+    
+    const deltaX = e.touches[0].clientX - touchStart.current.x;
+    const deltaY = e.touches[0].clientY - touchStart.current.y;
+    touchDelta.current = { x: deltaX, y: deltaY };
+    
+    // Détecter si c'est un swipe horizontal ou vertical
+    if (!isHorizontalSwipe.current && (Math.abs(deltaX) > 10 || Math.abs(deltaY) > 10)) {
+      isHorizontalSwipe.current = Math.abs(deltaX) > Math.abs(deltaY);
+    }
+    
+    // Empêcher le scroll vertical seulement si c'est un swipe horizontal
+    if (isHorizontalSwipe.current) {
+      e.preventDefault();
+    }
   };
 
   const handleTouchEnd = () => {
     if (!isDragging.current) return;
     isDragging.current = false;
-    if (touchDelta.current > 50) {
-      goTo(current - 1);
-    } else if (touchDelta.current < -50) {
-      goTo(current + 1);
+    
+    // Ne changer d'image que si c'était un swipe horizontal
+    if (isHorizontalSwipe.current) {
+      if (touchDelta.current.x > 50) {
+        goTo(current - 1);
+      } else if (touchDelta.current.x < -50) {
+        goTo(current + 1);
+      }
     }
-    touchDelta.current = 0;
+    
+    touchDelta.current = { x: 0, y: 0 };
+    isHorizontalSwipe.current = false;
   };
 
   // Mouse drag for desktop

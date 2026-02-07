@@ -61,7 +61,9 @@ const ProfilePage = () => {
     if (!editName.trim()) return;
     setIsSaving(true);
     try {
-      updateUser({ name: editName.trim(), bio: editBio.trim() });
+      if (updateUser) {
+        updateUser({ name: editName.trim(), bio: editBio.trim() });
+      }
       setShowEditModal(false);
     } catch (error) {
       console.error('Error saving profile:', error);
@@ -147,6 +149,18 @@ const ProfilePage = () => {
                   <Activity className="w-5 h-5" />
                   <span className="font-medium">Strava</span>
                 </button>
+                {(user.role === 'admin' || user.role === 'coach' || user.role === 'group_admin') && (
+                  <button
+                    onClick={() => {
+                      setShowSettingsMenu(false);
+                      navigate('/admin');
+                    }}
+                    className="w-full px-4 py-3 flex items-center gap-3 hover:bg-muted transition-colors text-left border-t border-border"
+                  >
+                    <Shield className="w-5 h-5 text-red-500" />
+                    <span className="font-medium">Administration</span>
+                  </button>
+                )}
                 <button
                   onClick={() => {
                     setShowSettingsMenu(false);
@@ -225,11 +239,11 @@ const ProfilePage = () => {
             <p className="text-[10px] text-muted-foreground">Distance totale</p>
           </div>
           <div className="bg-muted rounded-lg p-2 text-center">
-            <p className="text-lg font-bold">{user.runs || 0}</p>
+            <p className="text-lg font-bold">{user.stats.totalRuns || 0}</p>
             <p className="text-[10px] text-muted-foreground">Sorties</p>
           </div>
           <div className="bg-muted rounded-lg p-2 text-center">
-            <p className="text-lg font-bold">{user.joinedEvents || 0}</p>
+            <p className="text-lg font-bold">{myEvents.length || 0}</p>
             <p className="text-[10px] text-muted-foreground">Participations</p>
           </div>
         </div>

@@ -1,4 +1,5 @@
-import { Trophy, Users, Calendar, Heart, Star, MapPin } from 'lucide-react';
+import { Trophy, Users, Calendar, Heart, Star, MapPin, ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const milestones = [
   { year: '2016', title: 'Fondation du RCT', desc: 'Le Running Club Tunis est fondé le 21 avril 2016 par un groupe de passionnés de course à pied.', icon: Star },
@@ -18,12 +19,24 @@ const values = [
   { title: 'Partage', desc: 'Partager la passion du running et transmettre aux nouveaux.', emoji: '❤️' },
 ];
 
-const HistoryPage = () => (
-  <div className="pb-20 pt-6">
-    <div className="px-4 mb-6">
-      <h1 className="font-display font-extrabold text-2xl">Notre Histoire</h1>
-      <p className="text-sm text-muted-foreground">Running Club Tunis depuis 2016 🇹🇳</p>
-    </div>
+const HistoryPage = () => {
+  const navigate = useNavigate();
+  
+  return (
+    <div className="pb-20 pt-6">
+      <div className="px-4 mb-6 flex items-center gap-3">
+        <button 
+          onClick={() => navigate('/')}
+          className="w-10 h-10 rounded-full bg-muted flex items-center justify-center hover:bg-muted/80 transition-colors"
+          aria-label="Retour"
+        >
+          <ArrowLeft className="w-5 h-5" />
+        </button>
+        <div>
+          <h1 className="font-display font-extrabold text-2xl">Notre Histoire</h1>
+          <p className="text-sm text-muted-foreground">Running Club Tunis depuis 2016 🇹🇳</p>
+        </div>
+      </div>
 
     {/* Hero stats */}
     <div className="mx-4 rct-gradient-hero rounded-2xl p-6 mb-6 rct-shadow-elevated">
@@ -91,6 +104,7 @@ const HistoryPage = () => (
       </div>
     </div>
   </div>
-);
+  );
+};
 
 export default HistoryPage;

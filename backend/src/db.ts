@@ -9,7 +9,7 @@ export interface DbUser {
   password: string;
   name: string;
   avatar: string | null;
-  role: 'admin' | 'coach' | 'member';
+  role: 'admin' | 'coach' | 'group_admin' | 'member';
   group_name: string | null;
   distance: number;
   runs: number;
@@ -190,7 +190,7 @@ function initializeTables() {
       password TEXT NOT NULL,
       name TEXT NOT NULL,
       avatar TEXT,
-      role TEXT DEFAULT 'member' CHECK(role IN ('admin', 'coach', 'member')),
+      role TEXT DEFAULT 'member' CHECK(role IN ('admin', 'coach', 'group_admin', 'member')),
       group_name TEXT,
       distance REAL DEFAULT 0,
       runs INTEGER DEFAULT 0,

@@ -52,8 +52,8 @@ const StoriesBar = () => {
 
   return (
     <>
-      <div className="px-4 mb-4">
-        <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+      <div className="px-4 mb-4 overflow-hidden">
+        <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide touch-pan-x">
           {/* Add Story */}
           {isLoggedIn && (
             <button onClick={handleAddStory} className="flex flex-col items-center gap-1 flex-shrink-0">
