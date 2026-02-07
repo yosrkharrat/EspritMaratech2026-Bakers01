@@ -29,7 +29,7 @@ const ProfilePage = () => {
 
   const myEvents = events.filter(e => e.participants.includes(user.id));
   const myPosts = posts.filter(p => p.authorId === user.id);
-  const totalDistance = myPosts.reduce((acc, p) => acc + (p.distance || 0), 0);
+  const totalDistance = myPosts.reduce((acc, p) => acc + (parseFloat(p.distance || '0') || 0), 0);
 
   const roleBadge = () => {
     switch (user.role) {
@@ -70,7 +70,7 @@ const ProfilePage = () => {
               </div>
             </div>
           </div>
-          {user.bio && <p className="text-sm text-muted-foreground mb-3">{user.bio}</p>}
+          {/* Bio placeholder */}
           {user.group && (
             <p className="text-xs text-muted-foreground">Groupe: <span className="font-semibold text-foreground">{user.group}</span></p>
           )}

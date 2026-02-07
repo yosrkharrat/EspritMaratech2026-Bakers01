@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Eye, EyeOff, Users, Shield, Dumbbell, UserCheck } from 'lucide-react';
 
@@ -17,6 +18,7 @@ const demoAccounts = [
 ];
 
 const LoginPage = () => {
+  const navigate = useNavigate();
   const { login, loginAsVisitor } = useAuth();
   const [name, setName] = useState('');
   const [cin, setCin] = useState('');
@@ -30,13 +32,13 @@ const LoginPage = () => {
     if (!name.trim()) { setError('Entrez votre nom'); return; }
     if (!cin || cin.length !== 3) { setError('Code CIN: 3 chiffres'); return; }
     const result = login(name, cin);
-    if (!result.success) setError(result.error || 'Erreur');
+    if (result.success) { navigate('/'); return; }
+    setError(result.error || 'Erreur');
   };
 
   const handleDemoLogin = (n: string, c: string) => {
-    setName(n);
-    setCin(c);
-    login(n, c);
+    const result = login(n, c);
+    if (result.success) navigate('/');
   };
 
   return (
@@ -99,7 +101,7 @@ const LoginPage = () => {
             <div className="flex-1 h-px bg-border" />
           </div>
 
-          <button onClick={loginAsVisitor} className="w-full h-12 bg-muted text-foreground font-display font-semibold rounded-xl transition-colors hover:bg-muted/80">
+          <button onClick={() => { loginAsVisitor(); navigate('/'); }} className="w-full h-12 bg-muted text-foreground font-display font-semibold rounded-xl transition-colors hover:bg-muted/80">
             Continuer en visiteur
           </button>
         </div>

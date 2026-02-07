@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { Plus } from 'lucide-react';
-import { getStories, getUsers, createStory } from '@/lib/store';
+import { getStories, createStory } from '@/lib/store';
 import { useAuth } from '@/contexts/AuthContext';
 import StoryViewer from '@/components/StoryViewer';
 import type { Story } from '@/types';
@@ -8,15 +8,14 @@ import type { Story } from '@/types';
 const StoriesBar = () => {
   const { user, isLoggedIn } = useAuth();
   const stories = getStories();
-  const users = getUsers();
   const [viewerOpen, setViewerOpen] = useState(false);
   const [selectedStoryIdx, setSelectedStoryIdx] = useState(0);
   const fileRef = useRef<HTMLInputElement>(null);
 
   // Group stories by user
   const storyGroups = stories.reduce<Record<string, Story[]>>((acc, s) => {
-    if (!acc[s.userId]) acc[s.userId] = [];
-    acc[s.userId].push(s);
+    if (!acc[s.authorId]) acc[s.authorId] = [];
+    acc[s.authorId].push(s);
     return acc;
   }, {});
 
@@ -36,7 +35,16 @@ const StoriesBar = () => {
     if (!file || !user) return;
     const reader = new FileReader();
     reader.onload = () => {
-      createStory(user.id, reader.result as string);
+      const newStory: Story = {
+        id: Date.now().toString(),
+        authorId: user.id,
+        authorName: user.name,
+        authorAvatar: user.avatar || '',
+        image: reader.result as string,
+        createdAt: new Date().toISOString(),
+        viewers: [],
+      };
+      createStory(newStory);
     };
     reader.readAsDataURL(file);
     e.target.value = '';
@@ -58,19 +66,18 @@ const StoriesBar = () => {
 
           {/* Story avatars */}
           {groupEntries.map(([userId, userStories], idx) => {
-            const storyUser = users.find(u => u.id === userId);
-            const hasUnviewed = userStories.some(s => user && !s.viewedBy.includes(user.id));
+            const hasUnviewed = userStories.some(s => user && !s.viewers.includes(user.id));
             return (
               <button key={userId} onClick={() => openStory(idx)} className="flex flex-col items-center gap-1 flex-shrink-0">
                 <div className={`w-16 h-16 rounded-full p-[2px] ${hasUnviewed ? 'rct-gradient-hero' : 'bg-muted'}`}>
                   <div className="w-full h-full rounded-full bg-card flex items-center justify-center">
                     <span className="text-sm font-bold">
-                      {storyUser?.name.split(' ').map(n => n[0]).join('') || '?'}
+                      {userStories[0]?.authorName.split(' ').map(n => n[0]).join('') || '?'}
                     </span>
                   </div>
                 </div>
                 <span className="text-[10px] text-muted-foreground font-medium truncate w-16 text-center">
-                  {storyUser?.name.split(' ')[0] || 'User'}
+                  {userStories[0]?.authorName.split(' ')[0] || 'User'}
                 </span>
               </button>
             );
@@ -83,6 +90,7 @@ const StoriesBar = () => {
       {viewerOpen && (
         <StoryViewer
           stories={groupEntries[selectedStoryIdx]?.[1] || []}
+          initialIndex={0}
           onClose={() => setViewerOpen(false)}
         />
       )}

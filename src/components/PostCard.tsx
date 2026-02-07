@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Heart, MessageCircle, Share2, Send } from 'lucide-react';
 import { toggleLike, addComment, getUsers } from '@/lib/store';
 import { useAuth } from '@/contexts/AuthContext';
-import type { Post } from '@/types';
+import type { Post, Comment } from '@/types';
 
 interface PostCardProps {
   post: Post;
@@ -31,13 +31,15 @@ const PostCard = ({ post }: PostCardProps) => {
 
   const handleComment = () => {
     if (!user || !commentText.trim()) return;
-    addComment(post.id, user.id, commentText.trim());
-    setComments(prev => [...prev, {
+    const newComment: Comment = {
       id: Date.now().toString(),
       authorId: user.id,
+      authorName: user.name,
       content: commentText.trim(),
       createdAt: new Date().toISOString(),
-    }]);
+    };
+    addComment(post.id, newComment);
+    setComments(prev => [...prev, newComment]);
     setCommentText('');
   };
 
