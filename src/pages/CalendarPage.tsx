@@ -40,9 +40,9 @@ const CalendarPage = () => {
       events = events.filter(e => e.date === selectedDate);
     }
     
-    // Filter by group
+    // Filter by group (events with group 'Tous' are shown for all groups)
     if (filterGroup !== 'Tous') {
-      events = events.filter(e => e.group === filterGroup);
+      events = events.filter(e => e.group === filterGroup || e.group === 'Tous');
     }
     
     return events;
@@ -82,7 +82,7 @@ const CalendarPage = () => {
     setSelectedDate(null);
   };
 
-  const groups = ['Tous', ...new Set(allEvents.map(e => e.group))];
+  const groups = ['Tous', ...new Set(allEvents.map(e => e.group).filter(g => g !== 'Tous'))];
 
   const formatSelectedDate = () => {
     if (!selectedDate) return null;
