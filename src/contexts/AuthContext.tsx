@@ -37,14 +37,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       authApi.me()
         .then(response => {
           if (response.success && response.data?.user) {
-            const mappedUser = mapApiUser(response.data.user);
-            setUser(mappedUser);
+            const userData = response.data.user;
+            // If user already has frontend shape (offline fallback), use directly
+            if (userData.stats && userData.joinDate) {
+              setUser(userData as User);
+            } else {
+              const mappedUser = mapApiUser(userData);
+              setUser(mappedUser);
+            }
           } else {
+            // Invalid token, clear it
             setAuthToken(null);
           }
         })
         .catch(error => {
           console.error('Error verifying token:', error);
+          // On error, clear token and continue as guest
           setAuthToken(null);
         })
         .finally(() => {
@@ -54,6 +62,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setIsVisitor(true);
       setIsLoading(false);
     } else {
+      // No token and no visitor flag - treat as guest
       setIsLoading(false);
     }
   }, []);
@@ -62,8 +71,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const response = await authApi.login(email, password);
     if (response.success && response.data) {
       setAuthToken(response.data.token);
-      const mappedUser = mapApiUser(response.data.user);
-      setUser(mappedUser);
+      const userData = response.data.user;
+      // If user already has frontend shape (offline fallback), use directly
+      const resolvedUser = (userData.stats && userData.joinDate)
+        ? userData as User
+        : mapApiUser(userData);
+      setUser(resolvedUser);
       setIsVisitor(false);
       localStorage.removeItem('rct_visitor');
       return { success: true };
@@ -112,7 +125,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       canCreateEvents,
       canManageUsers,
     }}>
-      {children}
+      {isLoading ? (
+        <div className="flex min-h-screen items-center justify-center bg-background">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+            <p className="mt-4 text-muted-foreground">Chargement...</p>
+          </div>
+        </div>
+      ) : (
+        children
+      )}
     </AuthContext.Provider>
   );
 }
