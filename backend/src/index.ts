@@ -20,6 +20,8 @@ import coursesRoutes from './routes/courses';
 import notificationsRoutes from './routes/notifications';
 import messagesRoutes from './routes/messages';
 import settingsRoutes from './routes/settings';
+import stravaRoutes from './routes/strava';
+import eventChatRoutes from './routes/event-chat';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -63,6 +65,8 @@ app.use('/api/courses', coursesRoutes);
 app.use('/api/notifications', notificationsRoutes);
 app.use('/api/messages', messagesRoutes);
 app.use('/api/settings', settingsRoutes);
+app.use('/api/strava', stravaRoutes);
+app.use('/api/event-chat', eventChatRoutes);
 
 // Health check
 app.get('/api/health', (_req: Request, res: Response) => {

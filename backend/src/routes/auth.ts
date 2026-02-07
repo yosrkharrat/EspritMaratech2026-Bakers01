@@ -78,6 +78,9 @@ router.post('/register', async (req, res) => {
       joined_events: 0,
       strava_connected: false,
       strava_id: null,
+      strava_access_token: null,
+      strava_refresh_token: null,
+      strava_token_expires_at: null,
       created_at: now,
       updated_at: now,
     };

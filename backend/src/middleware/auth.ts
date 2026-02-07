@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'rct-connect-secret-key';
 
-export type UserRole = 'admin' | 'coach' | 'member';
+export type UserRole = 'admin' | 'coach' | 'group_admin' | 'member';
 
 export interface JWTPayload {
   userId: string;

@@ -16,6 +16,9 @@ export interface DbUser {
   joined_events: number;
   strava_connected: boolean | number;
   strava_id: string | null;
+  strava_access_token: string | null;
+  strava_refresh_token: string | null;
+  strava_token_expires_at: number | null;
   created_at: string;
   updated_at: string;
 }
@@ -148,6 +151,7 @@ export interface DbChatGroup {
   id: string;
   name: string;
   description: string | null;
+  event_id: string | null;
   created_by: string;
   created_at: string;
   updated_at: string;
@@ -197,6 +201,9 @@ function initializeTables() {
       joined_events INTEGER DEFAULT 0,
       strava_connected INTEGER DEFAULT 0,
       strava_id TEXT,
+      strava_access_token TEXT,
+      strava_refresh_token TEXT,
+      strava_token_expires_at INTEGER,
       created_at TEXT NOT NULL,
       updated_at TEXT NOT NULL
     );
@@ -368,10 +375,12 @@ function initializeTables() {
       id TEXT PRIMARY KEY,
       name TEXT NOT NULL,
       description TEXT,
+      event_id TEXT,
       created_by TEXT NOT NULL,
       created_at TEXT NOT NULL,
       updated_at TEXT NOT NULL,
-      FOREIGN KEY (created_by) REFERENCES users(id)
+      FOREIGN KEY (created_by) REFERENCES users(id),
+      FOREIGN KEY (event_id) REFERENCES events(id)
     );
 
     -- Chat Group Members table
@@ -405,11 +414,51 @@ function initializeTables() {
     CREATE INDEX IF NOT EXISTS idx_notifications_user ON notifications(user_id);
     CREATE INDEX IF NOT EXISTS idx_messages_conversation ON messages(conversation_id);
     CREATE INDEX IF NOT EXISTS idx_chat_messages_group ON chat_messages(group_id);
+    CREATE INDEX IF NOT EXISTS idx_chat_groups_event ON chat_groups(event_id);
   `);
 }
 
 // Initialize tables on startup
 initializeTables();
+
+// Run migrations for existing databases
+function runMigrations() {
+  // Add Strava token columns if they don't exist
+  try {
+    const tableInfo = db.prepare("PRAGMA table_info(users)").all() as any[];
+    const columnNames = tableInfo.map((col: any) => col.name);
+
+    if (!columnNames.includes('strava_access_token')) {
+      db.exec('ALTER TABLE users ADD COLUMN strava_access_token TEXT');
+      console.log('[Migration] Added strava_access_token column to users');
+    }
+    if (!columnNames.includes('strava_refresh_token')) {
+      db.exec('ALTER TABLE users ADD COLUMN strava_refresh_token TEXT');
+      console.log('[Migration] Added strava_refresh_token column to users');
+    }
+    if (!columnNames.includes('strava_token_expires_at')) {
+      db.exec('ALTER TABLE users ADD COLUMN strava_token_expires_at INTEGER');
+      console.log('[Migration] Added strava_token_expires_at column to users');
+    }
+  } catch (err) {
+    console.error('[Migration] Error running migrations:', err);
+  }
+
+  // Add event_id column to chat_groups if it doesn't exist
+  try {
+    const chatGroupTableInfo = db.prepare("PRAGMA table_info(chat_groups)").all() as any[];
+    const chatGroupColumns = chatGroupTableInfo.map((col: any) => col.name);
+
+    if (!chatGroupColumns.includes('event_id')) {
+      db.exec('ALTER TABLE chat_groups ADD COLUMN event_id TEXT REFERENCES events(id)');
+      console.log('[Migration] Added event_id column to chat_groups');
+    }
+  } catch (err) {
+    console.error('[Migration] Error adding event_id to chat_groups:', err);
+  }
+}
+
+runMigrations();
 
 // Database Helper class with methods for all operations
 class DatabaseHelper {
@@ -428,8 +477,8 @@ class DatabaseHelper {
 
   createUser(user: DbUser): void {
     const stmt = db.prepare(`
-      INSERT INTO users (id, email, password, name, avatar, role, group_name, distance, runs, joined_events, strava_connected, strava_id, created_at, updated_at)
-      VALUES (@id, @email, @password, @name, @avatar, @role, @group_name, @distance, @runs, @joined_events, @strava_connected, @strava_id, @created_at, @updated_at)
+      INSERT INTO users (id, email, password, name, avatar, role, group_name, distance, runs, joined_events, strava_connected, strava_id, strava_access_token, strava_refresh_token, strava_token_expires_at, created_at, updated_at)
+      VALUES (@id, @email, @password, @name, @avatar, @role, @group_name, @distance, @runs, @joined_events, @strava_connected, @strava_id, @strava_access_token, @strava_refresh_token, @strava_token_expires_at, @created_at, @updated_at)
     `);
     stmt.run({ ...user, strava_connected: user.strava_connected ? 1 : 0 });
   }
@@ -744,10 +793,14 @@ class DatabaseHelper {
 
   createChatGroup(group: DbChatGroup): void {
     const stmt = db.prepare(`
-      INSERT INTO chat_groups (id, name, description, created_by, created_at, updated_at)
-      VALUES (@id, @name, @description, @created_by, @created_at, @updated_at)
+      INSERT INTO chat_groups (id, name, description, event_id, created_by, created_at, updated_at)
+      VALUES (@id, @name, @description, @event_id, @created_by, @created_at, @updated_at)
     `);
     stmt.run(group);
+  }
+
+  getChatGroupByEventId(eventId: string): DbChatGroup | undefined {
+    return db.prepare('SELECT * FROM chat_groups WHERE event_id = ?').get(eventId) as DbChatGroup | undefined;
   }
 
   updateChatGroup(id: string, updates: Partial<DbChatGroup>): void {

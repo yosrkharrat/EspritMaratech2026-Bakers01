@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
-import { dbHelper, DbEvent, DbEventParticipant } from '../db';
+import { dbHelper, DbEvent, DbEventParticipant, DbChatGroup, DbChatGroupMember } from '../db';
 import { authenticateToken, optionalAuth, requireRole, AuthRequest } from '../middleware/auth';
 
 const router = Router();
@@ -117,6 +117,30 @@ router.post('/', authenticateToken, requireRole('admin', 'coach'), async (req: A
     };
 
     dbHelper.data.events.push(newEvent);
+
+    // Create chat group for this event automatically
+    const chatGroup: DbChatGroup = {
+      id: uuidv4(),
+      name: `Chat: ${validation.data.title}`,
+      description: `Groupe de discussion pour l'événement "${validation.data.title}"`,
+      event_id: newEvent.id,
+      created_by: req.user!.userId,
+      created_at: now,
+      updated_at: now,
+    };
+
+    dbHelper.createChatGroup(chatGroup);
+
+    // Add creator as admin of the chat group
+    const creatorMember: DbChatGroupMember = {
+      group_id: chatGroup.id,
+      user_id: req.user!.userId,
+      role: 'admin',
+      joined_at: now,
+    };
+
+    dbHelper.addChatGroupMember(creatorMember);
+
     await dbHelper.write();
 
     res.status(201).json({ success: true, data: newEvent });
@@ -233,6 +257,18 @@ router.post('/:id/join', authenticateToken, async (req: AuthRequest, res) => {
       dbHelper.data.users[userIndex].joined_events++;
     }
 
+    // Add user to event chat group automatically
+    const chatGroup = dbHelper.getChatGroupByEventId(req.params.id);
+    if (chatGroup) {
+      const chatMember: DbChatGroupMember = {
+        group_id: chatGroup.id,
+        user_id: req.user!.userId,
+        role: 'member',
+        joined_at: new Date().toISOString(),
+      };
+      dbHelper.addChatGroupMember(chatMember);
+    }
+
     await dbHelper.write();
 
     res.json({
@@ -262,6 +298,12 @@ router.delete('/:id/leave', authenticateToken, async (req: AuthRequest, res) => 
     const userIndex = dbHelper.data.users.findIndex(u => u.id === req.user!.userId);
     if (userIndex !== -1 && dbHelper.data.users[userIndex].joined_events > 0) {
       dbHelper.data.users[userIndex].joined_events--;
+    }
+
+    // Remove user from event chat group automatically
+    const chatGroup = dbHelper.getChatGroupByEventId(req.params.id);
+    if (chatGroup) {
+      dbHelper.removeChatGroupMember(chatGroup.id, req.user!.userId);
     }
 
     await dbHelper.write();

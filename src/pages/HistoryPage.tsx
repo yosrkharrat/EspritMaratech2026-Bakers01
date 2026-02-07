@@ -68,9 +68,9 @@ const HistoryPage = () => {
             <div className="absolute left-0 w-9 h-9 rounded-full rct-gradient-hero flex items-center justify-center rct-glow-blue">
               <m.icon className="w-4 h-4 text-white" />
             </div>
-            <span className="text-xs font-bold text-primary">{m.year}</span>
+            <span className="text-sm font-bold text-primary">{m.year}</span>
             <h4 className="font-display font-bold text-sm mt-0.5">{m.title}</h4>
-            <p className="text-xs text-muted-foreground mt-1">{m.desc}</p>
+            <p className="text-sm text-muted-foreground mt-1">{m.desc}</p>
           </div>
         ))}
       </div>

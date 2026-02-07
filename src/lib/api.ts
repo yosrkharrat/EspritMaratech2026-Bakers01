@@ -228,6 +228,31 @@ export const usersApi = {
     request(`/users/${id}/strava`, { method: 'DELETE' }),
 };
 
+// ============ STRAVA API ============
+
+export const stravaApi = {
+  getAuthUrl: () =>
+    request<{ authUrl: string }>('/strava/auth'),
+
+  exchangeCode: (code: string, state: string) =>
+    request<{ athleteId: string; firstName: string; lastName: string; profile: string }>('/strava/callback', {
+      method: 'POST',
+      body: JSON.stringify({ code, state }),
+    }),
+
+  getActivities: () =>
+    request<any[]>('/strava/activities'),
+
+  getStats: () =>
+    request<any>('/strava/stats'),
+
+  getAthlete: () =>
+    request<any>('/strava/athlete'),
+
+  disconnect: () =>
+    request('/strava/disconnect', { method: 'DELETE' }),
+};
+
 // ============ EVENTS API ============
 
 export const eventsApi = {
@@ -697,6 +722,57 @@ export const settingsApi = {
     }),
 };
 
+// ============ EVENT CHAT API ============
+
+export interface EventChatMessage {
+  id: string;
+  group_id: string;
+  sender_id: string;
+  sender_name: string;
+  sender_avatar: string | null;
+  content: string;
+  created_at: string;
+}
+
+export interface EventChatGroup {
+  id: string;
+  name: string;
+  description: string | null;
+  event_id: string;
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface EventChatMember {
+  user_id: string;
+  name: string;
+  avatar: string | null;
+  role: 'admin' | 'member';
+  joined_at: string;
+}
+
+export const eventChatApi = {
+  // Get chat group for an event
+  getGroup: (eventId: string) =>
+    request<EventChatGroup>(`/event-chat/${eventId}/group`),
+
+  // Get messages for event chat
+  getMessages: (eventId: string) =>
+    request<EventChatMessage[]>(`/event-chat/${eventId}/messages`),
+
+  // Send message to event chat
+  sendMessage: (eventId: string, content: string) =>
+    request<EventChatMessage>(`/event-chat/${eventId}/messages`, {
+      method: 'POST',
+      body: JSON.stringify({ content }),
+    }),
+
+  // Get chat members
+  getMembers: (eventId: string) =>
+    request<EventChatMember[]>(`/event-chat/${eventId}/members`),
+};
+
 // ============ HEALTH CHECK ============
 
 export const healthCheck = () => request('/health');
@@ -712,6 +788,7 @@ export default {
   notifications: notificationsApi,
   messages: messagesApi,
   settings: settingsApi,
+  eventChat: eventChatApi,
   healthCheck,
   setAuthToken,
   getAuthToken,

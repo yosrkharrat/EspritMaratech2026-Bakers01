@@ -8,10 +8,12 @@ import { App as CapApp } from "@capacitor/app";
 import { useEffect, useState } from "react";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import { AccessibilityProvider } from "@/contexts/AccessibilityContext";
 import { useEventNotifications } from "@/hooks/use-event-notifications";
 import SkipLink from "@/components/SkipLink";
 import BottomNav from "@/components/BottomNav";
 import SplashScreen from "@/components/SplashScreen";
+import VoiceAssistant from "@/components/VoiceAssistant";
 import HomePage from "@/pages/HomePage";
 import CalendarPage from "@/pages/CalendarPage";
 import MapPage from "@/pages/MapPage";
@@ -26,7 +28,9 @@ import NotificationsPage from "@/pages/NotificationsPage";
 import NotificationSettingsPage from "@/pages/NotificationSettingsPage";
 import MessagingPage from "@/pages/MessagingPage";
 import SettingsPage from "@/pages/SettingsPage";
+import AccessibilityPage from "@/pages/AccessibilityPage";
 import StravaPage from "@/pages/StravaPage";
+import StravaCallbackPage from "@/pages/StravaCallbackPage";
 import AdminPage from "@/pages/AdminPage";
 import ManageUsersPage from "@/pages/admin/ManageUsersPage";
 import ProgramsPage from "@/pages/admin/ProgramsPage";
@@ -104,6 +108,8 @@ const AppContent = () => {
         <Route path="/notifications/settings" element={<RequireAuth><NotificationSettingsPage /></RequireAuth>} />
         <Route path="/messaging" element={<RequireAuth><MessagingPage /></RequireAuth>} />
         <Route path="/settings" element={<RequireAuth><SettingsPage /></RequireAuth>} />
+        <Route path="/accessibility" element={<AccessibilityPage />} />
+        <Route path="/strava/callback" element={<StravaCallbackPage />} />
         <Route path="/strava" element={<RequireAuth><StravaPage /></RequireAuth>} />
         <Route path="/admin" element={<RequireAuth><AdminPage /></RequireAuth>} />
         <Route path="/admin/users" element={<RequireAuth><ManageUsersPage /></RequireAuth>} />
@@ -116,6 +122,7 @@ const AppContent = () => {
         </Routes>
         </main>
         {showNav && <BottomNav />}
+        <VoiceAssistant />
       </div>
     </>
   );
@@ -129,17 +136,19 @@ const App = () => {
       <TooltipProvider>
         <AuthProvider>
           <ThemeProvider>
-            {showSplash ? (
-              <SplashScreen onFinish={() => setShowSplash(false)} />
-            ) : (
-              <>
-                <Toaster />
-                <Sonner />
-                <HashRouter>
-                  <AppContent />
-                </HashRouter>
-              </>
-            )}
+            <AccessibilityProvider>
+              {showSplash ? (
+                <SplashScreen onFinish={() => setShowSplash(false)} />
+              ) : (
+                <>
+                  <Toaster />
+                  <Sonner />
+                  <HashRouter>
+                    <AppContent />
+                  </HashRouter>
+                </>
+              )}
+            </AccessibilityProvider>
           </ThemeProvider>
         </AuthProvider>
       </TooltipProvider>

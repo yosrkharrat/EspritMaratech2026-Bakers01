@@ -56,11 +56,11 @@ const StoriesBar = () => {
         <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide touch-pan-x">
           {/* Add Story */}
           {isLoggedIn && (
-            <button onClick={handleAddStory} className="flex flex-col items-center gap-1 flex-shrink-0">
+            <button onClick={handleAddStory} className="flex flex-col items-center gap-1 flex-shrink-0" aria-label="Ajouter une story">
               <div className="w-16 h-16 rounded-full border-2 border-dashed border-primary/50 flex items-center justify-center bg-muted">
                 <Plus className="w-6 h-6 text-primary" />
               </div>
-              <span className="text-[10px] text-muted-foreground font-medium">Ajouter</span>
+              <span className="text-xs text-muted-foreground font-medium">Ajouter</span>
             </button>
           )}
 
@@ -68,7 +68,7 @@ const StoriesBar = () => {
           {groupEntries.map(([userId, userStories], idx) => {
             const hasUnviewed = userStories.some(s => user && !s.viewers.includes(user.id));
             return (
-              <button key={userId} onClick={() => openStory(idx)} className="flex flex-col items-center gap-1 flex-shrink-0">
+              <button key={userId} onClick={() => openStory(idx)} className="flex flex-col items-center gap-1 flex-shrink-0" aria-label={`Voir la story de ${userStories[0]?.authorName}`}>
                 <div className={`w-16 h-16 rounded-full p-[2px] ${hasUnviewed ? 'rct-gradient-hero' : 'bg-muted'}`}>
                   <div className="w-full h-full rounded-full bg-card flex items-center justify-center">
                     <span className="text-sm font-bold">
@@ -76,7 +76,7 @@ const StoriesBar = () => {
                     </span>
                   </div>
                 </div>
-                <span className="text-[10px] text-muted-foreground font-medium truncate w-16 text-center">
+                <span className="text-xs text-muted-foreground font-medium truncate w-16 text-center">
                   {userStories[0]?.authorName.split(' ')[0] || 'User'}
                 </span>
               </button>

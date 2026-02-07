@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Moon, Sun, LogOut, Trash2, User, Bell, Shield, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Moon, Sun, LogOut, Trash2, User, Bell, Shield, ChevronRight, Accessibility } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { resetStore } from '@/lib/store';
@@ -37,6 +37,12 @@ const SettingsPage = () => {
             </div>
           ),
         },
+      ],
+    },
+    {
+      title: 'Accessibilité',
+      items: [
+        { icon: Accessibility, label: 'Paramètres d\'accessibilité', desc: 'Contraste, taille du texte, assistant vocal', action: () => navigate('/accessibility') },
       ],
     },
     {
@@ -78,7 +84,7 @@ const SettingsPage = () => {
 
       {sections.map(section => (
         <div key={section.title} className="mb-4">
-          <p className="text-xs font-semibold text-muted-foreground px-4 mb-2">{section.title}</p>
+            <p className="text-sm font-semibold text-muted-foreground px-4 mb-2">{section.title}</p>
           <div className="mx-4 bg-card rounded-2xl rct-shadow-card overflow-hidden">
             {section.items.map((item, i) => (
               <button key={i} onClick={item.action}

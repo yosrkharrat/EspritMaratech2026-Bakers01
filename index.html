@@ -18,6 +18,17 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      // Handle OAuth redirect from Strava
+      const urlParams = new URLSearchParams(window.location.search);
+      const code = urlParams.get('code');
+      const state = urlParams.get('state');
+      
+      if (code && state) {
+        // Strava OAuth callback detected - redirect to hash-based route
+        window.location.replace('/#/strava/callback?code=' + code + '&state=' + state);
+      }
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Strava - Redirection...</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f5f5;
+    }
+    .loader {
+      text-align: center;
+    }
+    .spinner {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #FC4C02;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="loader">
+    <div class="spinner"></div>
+    <p>Connexion à Strava en cours...</p>
+  </div>
+  <script>
+    // Capture OAuth params from URL
+    const params = window.location.search;
+    
+    if (params) {
+      // Redirect to hash-based callback route with params
+      window.location.replace('/#/strava/callback' + params);
+    } else {
+      // No params, redirect to strava page
+      window.location.replace('/#/strava');
+    }
+  </script>
+</body>
+</html>

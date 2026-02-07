@@ -12,7 +12,7 @@
     --card-foreground: 220 25% 10%;
     --popover: 0 0% 100%;
     --popover-foreground: 220 25% 10%;
-    --primary: 14 100% 57%;
+    --primary: 14 95% 48%;
     --primary-foreground: 0 0% 100%;
     --secondary: 25 95% 55%;
     --secondary-foreground: 0 0% 100%;
@@ -47,8 +47,8 @@
     --card-foreground: 0 0% 98%;
     --popover: 0 0% 7%;
     --popover-foreground: 0 0% 98%;
-    --primary: 14 100% 60%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 14 100% 65%;
+    --primary-foreground: 0 0% 0%;
     --secondary: 25 95% 58%;
     --secondary-foreground: 0 0% 100%;
     --muted: 0 0% 15%;
@@ -147,3 +147,167 @@ body.keyboard-open .bottom-nav {
 * {
   -webkit-tap-highlight-color: transparent;
 }
+
+/* ========== ACCESSIBILITY STYLES ========== */
+
+/* Screen reader only */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* High Contrast Mode */
+.high-contrast {
+  --background: 0 0% 100%;
+  --foreground: 0 0% 0%;
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 0%;
+  --primary: 14 100% 40%;
+  --primary-foreground: 0 0% 100%;
+  --muted: 0 0% 90%;
+  --muted-foreground: 0 0% 20%;
+  --border: 0 0% 0%;
+}
+
+.high-contrast.dark {
+  --background: 0 0% 0%;
+  --foreground: 0 0% 100%;
+  --card: 0 0% 10%;
+  --card-foreground: 0 0% 100%;
+  --primary: 14 100% 60%;
+  --primary-foreground: 0 0% 0%;
+  --muted: 0 0% 20%;
+  --muted-foreground: 0 0% 80%;
+  --border: 0 0% 100%;
+}
+
+.high-contrast * {
+  border-color: hsl(var(--border)) !important;
+}
+
+.high-contrast button:focus,
+.high-contrast a:focus,
+.high-contrast input:focus,
+.high-contrast textarea:focus {
+  outline: 3px solid hsl(var(--primary));
+  outline-offset: 2px;
+}
+
+/* Font Size Options */
+.font-normal {
+  font-size: 16px;
+}
+
+.font-large {
+  font-size: 18px;
+}
+
+.font-x-large {
+  font-size: 20px;
+}
+
+/* WCAG Minimum Text Sizes */
+body {
+  font-size: 16px;
+}
+
+.text-xs {
+  font-size: 0.875rem !important; /* 14px minimum au lieu de 12px */
+}
+
+.font-large h1, .font-x-large h1 {
+  font-size: 2.25em;
+}
+
+.font-large h2, .font-x-large h2 {
+  font-size: 1.875em;
+}
+
+.font-large h3, .font-x-large h3 {
+  font-size: 1.5em;
+}
+
+/* Reduced Motion */
+.reduce-motion *,
+.reduce-motion *::before,
+.reduce-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* Focus Visible (always show for keyboard navigation) */
+:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+  border-radius: 0.25rem;
+}
+
+/* Enhanced focus for all interactive elements */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+[role="button"]:focus-visible,
+[role="link"]:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: 2px;
+}
+
+/* Skip to content link */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  padding: 8px 16px;
+  text-decoration: none;
+  z-index: 100;
+  border-radius: 0 0 8px 0;
+  font-weight: 600;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* Improve link accessibility */
+a {
+  text-decoration-skip-ink: auto;
+}
+
+/* Better touch targets for mobile */
+@media (max-width: 768px) {
+  button,
+  a,
+  input[type="button"],
+  input[type="submit"],
+  input[type="checkbox"],
+  input[type="radio"],
+  [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Dark mode adjustments for accessibility */
+.dark img {
+  opacity: 0.9;
+}
+
+.dark .high-contrast img {
+  opacity: 1;
+  filter: contrast(1.2);
+}
+

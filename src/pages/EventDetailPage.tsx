@@ -1,10 +1,11 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Calendar, Clock, MapPin, Users, Share2, UserPlus, UserMinus } from 'lucide-react';
+import { ArrowLeft, Calendar, Clock, MapPin, Users, Share2, UserPlus, UserMinus, MessageCircle } from 'lucide-react';
 import { eventsApi } from '@/lib/api';
 import { mapApiEvent } from '@/lib/apiMappers';
 import { useAuth } from '@/contexts/AuthContext';
 import { useState, useEffect } from 'react';
 import { RCTEvent } from '@/types';
+import EventChat from '@/components/EventChat';
 
 const typeStyles: Record<string, string> = {
   daily: 'bg-primary/10 text-primary',
@@ -21,6 +22,7 @@ const EventDetailPage = () => {
   const [participants, setParticipants] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isJoined, setIsJoined] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -137,7 +139,7 @@ const EventDetailPage = () => {
 
       {/* Join / Leave */}
       {user && (
-        <div className="mx-4">
+        <div className="mx-4 space-y-3">
           <button onClick={handleJoin}
             className={`w-full h-12 font-display font-bold rounded-xl flex items-center justify-center gap-2 transition-transform active:scale-[0.98] ${
               isJoined
@@ -146,7 +148,29 @@ const EventDetailPage = () => {
             }`}>
             {isJoined ? <><UserMinus className="w-5 h-5" /> Quitter l'événement</> : <><UserPlus className="w-5 h-5" /> Participer</>}
           </button>
+
+          {/* Chat Button - Only visible if user is joined */}
+          {isJoined && (
+            <button
+              onClick={() => setIsChatOpen(true)}
+              className="w-full h-12 bg-card border-2 border-primary text-primary font-display font-bold rounded-xl flex items-center justify-center gap-2 transition-transform active:scale-[0.98] hover:bg-primary/10"
+              aria-label="Ouvrir le chat de groupe"
+            >
+              <MessageCircle className="w-5 h-5" />
+              Chat de groupe
+            </button>
+          )}
         </div>
+      )}
+
+      {/* Event Chat Modal */}
+      {id && event && isJoined && (
+        <EventChat
+          eventId={id}
+          eventTitle={event.title}
+          isOpen={isChatOpen}
+          onClose={() => setIsChatOpen(false)}
+        />
       )}
     </div>
   );

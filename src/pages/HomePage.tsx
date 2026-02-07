@@ -21,18 +21,8 @@ const HomePage = () => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        // Fetch posts from API
-        let apiPosts: Post[] = [];
-        const postsResponse = await postsApi.getAll({ limit: 5 });
-        if (postsResponse.success && postsResponse.data) {
-          apiPosts = (postsResponse.data as any[]).map(mapApiPost);
-        }
-
-        // Merge with RCT static posts and sort by date (newest first)
-        const allPosts = [...apiPosts, ...rctPosts].sort(
-          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        );
-        setPosts(allPosts);
+        // Display only RCT static posts
+        setPosts(rctPosts);
 
         // Fetch unread notifications count
         if (user) {
@@ -55,13 +45,13 @@ const HomePage = () => {
     <div className="pb-20">
       {/* Hero */}
       <div className="relative">
-        <img src={heroBanner} alt="Running Club Tunis" className="w-full" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
+        <img src={heroBanner} alt="Coureur brandissant le drapeau Running Club Tunis dans les montagnes" className="w-full" />
+        <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-background via-background/80 to-transparent" />
         <div className="absolute top-2 left-2 right-2 flex items-center justify-between">
-          <button onClick={() => navigate('/history')} className="w-10 h-10 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center">
+          <button onClick={() => navigate('/history')} className="w-10 h-10 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center" aria-label="Voir l'historique du club">
             <BookOpen className="w-5 h-5 text-white" />
           </button>
-          <button onClick={() => navigate('/notifications')} className="w-10 h-10 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center relative">
+          <button onClick={() => navigate('/notifications')} className="w-10 h-10 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center relative" aria-label="Voir les notifications">
             <Bell className="w-5 h-5 text-white" />
             {unread > 0 && (
               <span className="absolute -top-0.5 -right-0.5 w-5 h-5 rounded-full bg-destructive text-[10px] text-white font-bold flex items-center justify-center">{unread}</span>
@@ -82,7 +72,7 @@ const HomePage = () => {
         <div className="flex items-center justify-between mb-3">
           <h2 className="font-display font-bold text-lg">Actualités</h2>
           {isLoggedIn && (
-            <button onClick={() => navigate('/create-post')} className="flex items-center gap-1 text-xs text-primary font-semibold">
+            <button onClick={() => navigate('/create-post')} className="flex items-center gap-1 text-sm text-primary font-semibold" aria-label="Créer une nouvelle publication">
               <Plus className="w-3.5 h-3.5" /> Publier
             </button>
           )}
