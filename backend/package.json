@@ -8,6 +8,8 @@
     "link-admin-strava": "tsx src/scripts/link-admin-strava.ts",
     "force-link-admin": "tsx src/scripts/force-link-admin.ts",
     "strava-auth-url": "tsx src/scripts/get-strava-auth-url.ts",
+    "add-demo-stories": "tsx src/scripts/add-demo-stories.ts",
+    "add-demo-posts": "tsx src/scripts/add-demo-posts.ts",
     "build": "tsc",
     "start": "node dist/index.js",
     "seed": "tsx src/seed.ts"

@@ -20,7 +20,7 @@
     --muted-foreground: 220 12% 38%;
     --accent: 14 90% 50%;
     --accent-foreground: 0 0% 100%;
-    --destructive: 0 84% 60%;
+    --destructive: 0 84% 48%;
     --destructive-foreground: 0 0% 100%;
     --border: 220 15% 90%;
     --input: 220 15% 90%;
@@ -55,7 +55,7 @@
     --muted-foreground: 0 0% 64%;
     --accent: 14 90% 55%;
     --accent-foreground: 0 0% 100%;
-    --destructive: 0 84% 60%;
+    --destructive: 0 84% 65%;
     --destructive-foreground: 0 0% 100%;
     --border: 0 0% 15%;
     --input: 0 0% 15%;
@@ -232,6 +232,19 @@ body {
 
 .font-large h3, .font-x-large h3 {
   font-size: 1.5em;
+}
+
+/* Bottom Nav Text Adaptive Sizing */
+.bottom-nav-text {
+  font-size: 0.625rem; /* 10px par défaut */
+}
+
+.font-large .bottom-nav-text {
+  font-size: 0.75rem; /* 12px en taille grande */
+}
+
+.font-x-large .bottom-nav-text {
+  font-size: 0.875rem; /* 14px en taille très grande */
 }
 
 /* Reduced Motion */

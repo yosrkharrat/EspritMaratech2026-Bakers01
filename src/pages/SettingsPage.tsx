@@ -74,7 +74,7 @@ const SettingsPage = () => {
   return (
     <div className="pb-20 pt-6">
       <div className="flex items-center gap-3 px-4 mb-6">
-        <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
+        <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full bg-muted flex items-center justify-center" aria-label="Retour">
           <ArrowLeft className="w-5 h-5" />
         </button>
         <h1 className="font-display font-extrabold text-xl">Paramètres</h1>
@@ -116,6 +116,7 @@ const SettingsPage = () => {
         <button
           onClick={handleLogout}
           className="w-full flex items-center justify-center gap-2 px-4 py-3.5 bg-destructive/10 rounded-2xl text-destructive font-semibold hover:bg-destructive/20 transition-colors"
+          aria-label="Se déconnecter"
         >
           <LogOut className="w-5 h-5" />
           {t('settings.logout')}

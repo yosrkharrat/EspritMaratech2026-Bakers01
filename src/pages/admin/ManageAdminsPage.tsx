@@ -147,12 +147,14 @@ const ManageAdminsPage = () => {
                   <button
                     onClick={() => {/* TODO: Navigate to edit */}}
                     className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center hover:bg-primary/10 transition-colors"
+                    aria-label="Modifier cet administrateur"
                   >
                     <Edit className="w-4 h-4 text-muted-foreground" />
                   </button>
                   <button
                     onClick={() => handleDelete(admin.id, admin.name)}
                     className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center hover:bg-destructive/10 transition-colors"
+                    aria-label="Supprimer cet administrateur"
                   >
                     <Trash2 className="w-4 h-4 text-destructive" />
                   </button>

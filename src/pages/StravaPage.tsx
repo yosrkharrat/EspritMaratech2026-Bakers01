@@ -258,6 +258,7 @@ const StravaPage = () => {
               onClick={loadActivities}
               disabled={syncing}
               className={`w-10 h-10 rounded-full bg-muted flex items-center justify-center ${syncing ? 'animate-spin' : ''}`}
+              aria-label="Actualiser les activités Strava"
             >
               <RefreshCw className="w-5 h-5" />
             </button>

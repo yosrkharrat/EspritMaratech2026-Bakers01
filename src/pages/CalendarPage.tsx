@@ -140,8 +140,7 @@ const CalendarPage = () => {
           <div className="flex gap-2">
             <button 
               onClick={() => navigate('/map')}
-              className="w-10 h-10 rounded-full bg-muted flex items-center justify-center transition-all hover:bg-muted/80"
-            >
+              className="w-10 h-10 rounded-full bg-muted flex items-center justify-center transition-all hover:bg-muted/80"              aria-label="Retour"            >
               <MapPin className="w-5 h-5" />
             </button>
             {canCreateEvents && (

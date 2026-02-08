@@ -179,7 +179,7 @@ const MessagingPage = () => {
       <div className="flex flex-col h-screen">
         {/* Header */}
         <div className="flex items-center gap-3 px-4 py-4 bg-card border-b border-border safe-top">
-          <button onClick={() => setSelectedGroup(null)} className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
+          <button onClick={() => setSelectedGroup(null)} className="w-10 h-10 rounded-full bg-muted flex items-center justify-center" aria-label="Retour à la liste des groupes">
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div className="w-10 h-10 rounded-full rct-gradient-hero flex items-center justify-center">
@@ -271,7 +271,7 @@ const MessagingPage = () => {
     <div className="pb-20 pt-6">
       <div className="flex items-center justify-between px-4 mb-6">
         <div className="flex items-center gap-3">
-          <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
+          <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full bg-muted flex items-center justify-center" aria-label="Retour">
             <ArrowLeft className="w-5 h-5" />
           </button>
           <h1 className="font-display font-extrabold text-xl">Messages</h1>

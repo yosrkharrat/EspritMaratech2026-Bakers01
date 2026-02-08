@@ -305,7 +305,7 @@ const CalorieTrackerPage = () => {
 
       {/* Header */}
       <div className="flex items-center gap-3 px-4 mb-6">
-        <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
+        <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full bg-muted flex items-center justify-center" aria-label="Retour">
           <ArrowLeft className="w-5 h-5" />
         </button>
         <h1 className="font-display font-extrabold text-xl">Suivi Calories</h1>
@@ -459,6 +459,7 @@ const CalorieTrackerPage = () => {
                         <button 
                           onClick={() => handleDeleteFood(food.id)}
                           className="w-6 h-6 rounded-full bg-destructive/10 flex items-center justify-center"
+                          aria-label="Supprimer cet aliment"
                         >
                           <Trash2 className="w-3 h-3 text-destructive" />
                         </button>

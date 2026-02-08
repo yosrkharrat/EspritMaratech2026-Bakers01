@@ -7,8 +7,8 @@ dotenv.config();
 async function main() {
   const clientId = process.env.STRAVA_CLIENT_ID || '201108';
   const clientSecret = process.env.STRAVA_CLIENT_SECRET || '306d4e68a83f98e1a5ac0af70473e824ea796402';
-  let accessToken = process.env.STRAVA_ACCESS_TOKEN || 'baa2db7bbe78eabf0cb92ecb8f976c4ca7c04461';
-  let refreshToken = process.env.STRAVA_REFRESH_TOKEN || '09024f1088b537c3086de8a6f541bf7d49d4aa8a';
+  let accessToken = process.env.STRAVA_ACCESS_TOKEN || '0192e3ac23bcf47b64066aca3d0c764574912077';
+  let refreshToken = process.env.STRAVA_REFRESH_TOKEN || '41e5338b7f30f52fdc7a6fcc20d8d3fc8c8cf874';
 
   const adminEmail = 'admin@rct.tn';
   const admin = dbHelper.getUserByEmail(adminEmail);
@@ -28,7 +28,7 @@ async function main() {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
       // Token is valid, calculate expiry
-      expiresAt = Math.floor(new Date('2026-02-08T13:12:27Z').getTime() / 1000);
+      expiresAt = Math.floor(new Date('2026-02-08T16:58:44Z').getTime() / 1000);
     } catch (err: any) {
       if (err.response?.status === 401) {
         // Token expired, try to refresh

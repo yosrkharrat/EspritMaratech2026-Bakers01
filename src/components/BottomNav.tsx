@@ -50,7 +50,7 @@ const BottomNav = () => {
             aria-current={({ isActive }) => (isActive ? "page" : undefined)}
           >
             <Icon className="w-5 h-5" strokeWidth={2} aria-hidden="true" />
-            <span className="text-[10px] font-medium font-body">{label}</span>
+            <span className="bottom-nav-text font-medium font-body">{label}</span>
           </NavLink>
         ))}
       </div>
